@@ -1,0 +1,60 @@
+.input-group {
+  position: relative; 
+  display: flex;
+  align-items: center;
+}
+
+.result-box {
+  display: inline-block;
+  width: 80%; 
+  padding: 10px;
+  margin: 10px auto;
+  background-color: #070808; 
+  border: 2px solid #ccc; 
+  border-radius: 5px; 
+  font-size: 16px;
+  text-align: center; 
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+
+textarea {
+  resize: none; 
+  overflow-y: auto; 
+  width: 30%; 
+  height: 80px; 
+  padding: 2px; 
+  border: 1px solid #ccc; 
+  border-radius: 5px; 
+  background-color: #f8f8f8; 
+  box-sizing: border-box; 
+}
+
+/* Styl podpowiedzi przed wpisaniem danych */
+textarea::placeholder {
+  color: rgba(128, 128, 128, 0.6); 
+  font-style: italic;
+}
+
+/* Specyficzny styl dla #submit-button */
+#submit-button {
+  margin-top: 20px; 
+  display: block; 
+}
+
+/* Specyficzny styl dla #sequence */
+#sequence {
+  height: 30px; 
+}
+
+/* Styl dla błędów */
+.error-message {
+  margin-left: 30px; 
+  padding: 10px;
+  border: 2px solid red; 
+  border-radius: 5px;
+  background-color: rgba(255, 0, 0, 0.2); 
+  color: red; 
+  font-size: 14px;
+  white-space: normal;
+}
