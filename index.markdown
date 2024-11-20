@@ -40,13 +40,14 @@ layout: default
           bitów
     </div>
   </div>
-  
+    
   <div style="margin: 20px 0;">
-    <h3>Zapis dziesiętny</h3>
-    <div id="decimal-result" class="result-box"></div>
+      <h3>Zapis dziesiętny</h3>
+      <div id="decimal-result" class="result-box"></div>
   </div>
-  
+    
   <button id="step-by-step-button" class="btn">Krok po kroku</button>
+  <div id="steps-section" style="margin-top: 20px;"></div>
   </div>
 </div>
 
