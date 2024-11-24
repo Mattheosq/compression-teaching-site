@@ -10,14 +10,20 @@ document.getElementById("submit-button").addEventListener("click", function() {
   
   clearErrors();
 
+  // Czyszczenie sekcji krok po kroku przy każdym zatwierdzeniu
+  const stepsContainer = document.getElementById("steps-section");
+  stepsContainer.innerHTML = "";
+
   if (symbolsValue === "") {
+    hideResults();
     displayError(symbolsInput, "Pole symboli nie może być puste.");
     return;
   }
 
   if (probabilitiesValue === "") {
-      displayError(probabilitiesInput, "Pole prawdopodobieństw nie może być puste.");
-      return;
+    hideResults();
+    displayError(probabilitiesInput, "Pole prawdopodobieństw nie może być puste.");
+    return;
   }
 
   // Przetworzenie wejściowych danych użytkownika
@@ -26,6 +32,7 @@ document.getElementById("submit-button").addEventListener("click", function() {
   
 
   if (symbols.length !== probabilitiesArray.length) {
+    hideResults();
     displayError(symbolsInput, "Ilość symboli i prawdopodobieństw musi być taka sama.");
     return;
   }
@@ -35,6 +42,7 @@ document.getElementById("submit-button").addEventListener("click", function() {
   for (let i = 0; i < symbols.length; i++) {
     const probability = probabilitiesArray[i];
     if (isNaN(probability) || probability <= 0) {
+      hideResults();
       displayError(probabilitiesInput, "Prawdopodobieństwa muszą być liczbami dodatnimi z zakresu (0 - 1).");
       return;
     }
@@ -43,19 +51,22 @@ document.getElementById("submit-button").addEventListener("click", function() {
   }
   
   if (Math.abs(sum - 1) > 1e-6) {
+    hideResults();
     displayError(probabilitiesInput, "Prawdopodobieństwa muszą sumować się do 1.");
     return;
   }
 
   if (sequenceValue === "") {
+    hideResults();
     displayError(sequenceInput, "Pole ciągu do zakodowania nie może być puste.");
     return;
   }
 
   for (const char of sequenceValue) {
     if (!probabilities[char]) {
-        displayError(sequenceInput, `Symbol "${char}" nie jest uwzględniony w zbiorze symboli.`);
-        return;
+      hideResults();  
+      displayError(sequenceInput, `Symbol "${char}" nie jest uwzględniony w zbiorze symboli.`);
+      return;
     }
   }
   // Ustawienie globalnych zmiennych
@@ -85,9 +96,21 @@ function updateResults() {
 }
 
 function displayResult(binaryResult, decimalResult) {
-  document.getElementById("result-section").style.display = "block";
-  document.getElementById("binary-result").textContent = binaryResult;
-  document.getElementById("decimal-result").textContent = decimalResult;
+  const resultSection = document.getElementById("result-section");
+  resultSection.style.display = "block";
+
+  const binaryResultBox = document.getElementById("binary-result");
+  binaryResultBox.className = "result-box center-text";
+  binaryResultBox.textContent = binaryResult;
+
+  const decimalResultBox = document.getElementById("decimal-result");
+  decimalResultBox.className = "result-box center-text";
+  decimalResultBox.textContent = decimalResult;
+}
+
+function hideResults() {
+  const resultSection = document.getElementById("result-section");
+  resultSection.style.display = "none";
 }
 
 // Event listener dla zmiany precyzji
@@ -100,6 +123,7 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
 
   // Rozkład prawdopodobieństwa
   const distributionBlock = createStepBlock("Rozkład prawdopodobieństwa", "", true);
+  distributionBlock.classList.add("result-box", "center-text");
   stepsContainer.appendChild(distributionBlock);
 
   // Iteracja po symbolach w wiadomości
@@ -113,6 +137,9 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
       // Obliczenia nowych przedziałów
       const nowy_gorny = dolny_limit + zakres * window.currentProbabilities[symbol].gorny;
       const nowy_dolny = dolny_limit + zakres * window.currentProbabilities[symbol].dolny;
+
+      const tytul = `Krok ${i + 1}, symbol ${symbol}:`;
+      
 
       const opis = `
         <div style="text-align: left;">
@@ -130,7 +157,8 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
       `;
 
       // Dodanie kroku do kontenera
-      const stepBlock = createStepBlock(`Krok ${i + 1}, symbol ${symbol}:`, opis, false);
+      const stepBlock = createStepBlock(tytul, opis, false);
+      stepBlock.classList.add("result-box","left-text");
       stepsContainer.appendChild(stepBlock);
 
       // Aktualizacja limitów
@@ -151,6 +179,7 @@ function createStepBlock(title, content, isDistribution) {
 
   const header = document.createElement("h3");
   header.textContent = title;
+  header.style.marginBottom = "5px";
   stepBlock.appendChild(header);
 
   const graphic = document.createElement("div");
@@ -158,7 +187,7 @@ function createStepBlock(title, content, isDistribution) {
   stepBlock.appendChild(graphic);
 
   if (content && !isDistribution) {
-      const description = document.createElement("p");
+      const description = document.createElement("div");
       description.className = "step-description";
       description.innerHTML = content;
       stepBlock.appendChild(description);
