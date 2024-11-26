@@ -2,7 +2,6 @@
   position: relative; 
   display: flex;
   align-items: center;
-  margin: 2px auto;
 }
 
 .result-box {
@@ -71,7 +70,7 @@ textarea::placeholder {
   margin: 0;
   padding: 0 5px;
   position: absolute;
-  top: -40px; 
+  top: -100px; 
   color: $conifer; 
   display: inline-block;
 }
