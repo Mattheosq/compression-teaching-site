@@ -123,7 +123,8 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
 
   // Rozkład prawdopodobieństwa
   const distributionBlock = createStepBlock("Rozkład prawdopodobieństwa", "", true);
-  //distributionBlock.classList.add("result-box", "center-text");
+  //distributionBlock.classList.add("result-box", "center-text);
+  distributionBlock.classList.add("result-box");
   stepsContainer.appendChild(distributionBlock);
 
   // Iteracja po symbolach w wiadomości
@@ -159,6 +160,7 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
       // Dodanie kroku do kontenera
       const stepBlock = createStepBlock(tytul, opis, false);
       //stepBlock.classList.add("result-box","left-text");
+      stepBlock.classList.add("result-box");
       stepsContainer.appendChild(stepBlock);
 
       // Aktualizacja limitów
