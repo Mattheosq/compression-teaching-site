@@ -1,9 +1,4 @@
 .input-group {
-  // BACKKK
-  
-  
-  
-  
   position: relative; 
   display: flex;
   align-items: center;
@@ -13,8 +8,6 @@
   display: inline-block;
   width: 80%; 
   padding: 10px;
-
-  
   margin: 10px auto;
   background-color: #070808; 
   border: 2px solid #ccc; 
@@ -24,8 +17,7 @@
 }
 
 .result-box.center-text {
-  display: flex;
-  justify-content: center;
+  text-align: center; 
 }
 
 .result-box.left-text {
@@ -36,9 +28,8 @@ textarea {
   resize: none; 
   overflow-y: auto; 
   width: 30%; 
-  height: 80px;
-  margin: 0;
-  margin-bottom: 20px;
+  height: 80px; 
+  padding: 2px; 
   border: 1px solid #ccc; 
   border-radius: 5px; 
   background-color: #f8f8f8; 
@@ -74,19 +65,18 @@ textarea::placeholder {
   white-space: normal;
 }
 
-.step-block h3 {
+.step-block h3, .result-box h3 {
   margin: 0;
-  padding: 0 5px;
-  position: absolute;
-  top: -30px; 
+  padding: 0;
+  position: relative;
+  top: -40px; 
   color: $conifer; 
   display: inline-block;
-  font-size: 100px;
+  padding: 0 5px;
 }
 
 .step-block {
-  position: relative;
-  margin-top: 60px;
+  margin-top: 35px;
 }
 
 html, body {
@@ -106,13 +96,4 @@ footer {
   background-color: $body-background; 
   color: $conifer; 
   padding: 10px 0;
-}
-
-.graphic-placeholder {
-  width: 90%; 
-  height: 100px; 
-  background-color: #ccc; 
-  margin: 10px auto; 
-  border: 1px solid #999; 
-  display: block; 
 }
