@@ -92,11 +92,21 @@ textarea::placeholder {
 
 .graphic-placeholder {
   width: 90%; 
-  height: 150px; 
-  background-color: #ccc; 
+  height: 150px;
+  background-color: #fff; 
   margin: 10px auto; 
   border: 1px solid #999; 
   display: block; 
+}
+
+.x-axis path,.x-axis line {
+  stroke: black; 
+  stroke-width: 1px; 
+}
+
+.x-axis text {
+  fill: black; 
+  font-size: 12px; 
 }
 
 main.container {

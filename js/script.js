@@ -124,6 +124,21 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
   // Rozkład prawdopodobieństwa
   const distributionBlock = createStepBlock("Rozkład prawdopodobieństwa", "", true);
   distributionBlock.classList.add("result-box", "center-text");
+
+  // Pobranie danych dla osi
+  const probabilities = Object.values(window.currentProbabilities).map(p => p.gorny);
+  probabilities.unshift(0);
+  const symbols = window.currentSymbols;
+
+  // Wywołanie createDynamicAxis dla Rozkładu prawdopodobieństwa
+  createDynamicAxis(
+      distributionBlock.querySelector(".graphic-placeholder"), // Kontener osi
+      probabilities, // Wartości przedziałów
+      symbols, // Symbole
+      0, // Lewy kraniec
+      1 // Prawy kraniec
+  );
+
   stepsContainer.appendChild(distributionBlock);
 
   // Iteracja po symbolach w wiadomości
@@ -131,39 +146,52 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
   let gorny_limit = 1.0;
 
   for (let i = 0; i < window.currentSequence.length; i++) {
-      const symbol = window.currentSequence[i];
-      const zakres = gorny_limit - dolny_limit;
+    const symbol = window.currentSequence[i];
+    const zakres = gorny_limit - dolny_limit;
 
-      // Obliczenia nowych przedziałów
-      const nowy_gorny = dolny_limit + zakres * window.currentProbabilities[symbol].gorny;
-      const nowy_dolny = dolny_limit + zakres * window.currentProbabilities[symbol].dolny;
+    // Obliczenia nowych przedziałów
+    const nowy_gorny = dolny_limit + zakres * window.currentProbabilities[symbol].gorny;
+    const nowy_dolny = dolny_limit + zakres * window.currentProbabilities[symbol].dolny;
 
-      const tytul = `Krok ${i + 1}, symbol ${symbol}:`;
-      
+    const tytul = `Krok ${i + 1}, symbol ${symbol}:`;
+    
 
-      const opis = `
-        <div style="text-align: left;">
-            Delta: <span style="color: #f00;">${formatNumber(gorny_limit)}</span> − <span style="color: #0f0;">${formatNumber(dolny_limit)}</span> = <span style="color: #ffa500;">${formatNumber(zakres)}</span>
-        </div>
-        <div style="text-align: left;">
-            Nowy lewy kraniec: <span style="color: #0f0;">${formatNumber(dolny_limit)}</span> + <span style="color: #ffa500;">${formatNumber(zakres)}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].dolny)}</span> = ${formatNumber(nowy_dolny)}
-        </div>
-        <div style="text-align: left;">
-            Nowy prawy kraniec: <span style="color: #0f0;">${formatNumber(dolny_limit)}</span> + <span style="color: #ffa500;">${formatNumber(zakres)}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].gorny)}</span> = ${formatNumber(nowy_gorny)}
-        </div>
-        <div style="text-align: left;">
-            Wyliczony przedział: ⟨<span style="color: #0f0;">${formatNumber(nowy_dolny)}</span>, <span style="color: #f00;">${formatNumber(nowy_gorny)}</span>)
-        </div>
-      `;
+    const opis = `
+      <div style="text-align: left;">
+          Delta: <span style="color: #f00;">${formatNumber(gorny_limit)}</span> − <span style="color: #0f0;">${formatNumber(dolny_limit)}</span> = <span style="color: #ffa500;">${formatNumber(zakres)}</span>
+      </div>
+      <div style="text-align: left;">
+          Nowy lewy kraniec: <span style="color: #0f0;">${formatNumber(dolny_limit)}</span> + <span style="color: #ffa500;">${formatNumber(zakres)}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].dolny)}</span> = ${formatNumber(nowy_dolny)}
+      </div>
+      <div style="text-align: left;">
+          Nowy prawy kraniec: <span style="color: #0f0;">${formatNumber(dolny_limit)}</span> + <span style="color: #ffa500;">${formatNumber(zakres)}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].gorny)}</span> = ${formatNumber(nowy_gorny)}
+      </div>
+      <div style="text-align: left;">
+          Wyliczony przedział: ⟨<span style="color: #0f0;">${formatNumber(nowy_dolny)}</span>, <span style="color: #f00;">${formatNumber(nowy_gorny)}</span>)
+      </div>
+    `;
 
-      // Dodanie kroku do kontenera
-      const stepBlock = createStepBlock(tytul, opis, false);
-      stepBlock.classList.add("result-box","left-text");
-      stepsContainer.appendChild(stepBlock);
+    // Dodanie kroku do kontenera
+    const stepBlock = createStepBlock(tytul, opis, false);
+    stepBlock.classList.add("result-box","left-text");
 
-      // Aktualizacja limitów
-      dolny_limit = nowy_dolny;
-      gorny_limit = nowy_gorny;
+    const updatedProbabilities = probabilities.map(p => dolny_limit + zakres * p); // temp
+
+    // Wywołanie createDynamicAxis dla osi w kroku (stepBlock)
+    createDynamicAxis(
+        stepBlock.querySelector(".graphic-placeholder"), 
+        updatedProbabilities, // probabilities
+        symbols, 
+        dolny_limit, 
+        gorny_limit, 
+        [nowy_dolny, nowy_gorny] // Zaznaczony przedział
+    );
+
+    stepsContainer.appendChild(stepBlock);
+
+    // Aktualizacja limitów
+    dolny_limit = nowy_dolny;
+    gorny_limit = nowy_gorny;
   }
   scrollToSteps();
 });
@@ -187,14 +215,74 @@ function createStepBlock(title, content, isDistribution) {
   stepBlock.appendChild(graphic);
 
   if (content && !isDistribution) {
-      const description = document.createElement("div");
-      description.className = "step-description";
-      description.innerHTML = content;
-      stepBlock.appendChild(description);
+    const description = document.createElement("div");
+    description.className = "step-description";
+    description.innerHTML = content;
+    stepBlock.appendChild(description);
   }
 
   return stepBlock;
 }
+
+// Funkcja tworząca dynamiczne grafiki osi z przedziałami
+function createDynamicAxis(containerId, probabilities, symbols, leftBound, rightBound, highlightRange = null) {
+  const container = d3.select(containerId);
+  container.html(''); 
+
+  const width = 720; 
+  const height = 150;
+  const padding = 40;
+
+  // Tworzenie kanwy SVG
+  const svg = container.append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+  // Wyliczanie skali dla zachowania proporcji w długości przedziałów
+  const scale = d3.scaleLinear()
+      .domain([leftBound, rightBound])
+      .range([padding, width - padding]);
+
+  // Tworzenie osi
+  const axis = d3.axisBottom(scale)
+    .tickValues(probabilities)
+    .tickFormat(highlightRange == null 
+        ? d => parseFloat(d.toFixed(5)).toString() 
+        : (d, i) => i === 0 || i === probabilities.length - 1 || highlightRange.includes(d) 
+            ? parseFloat(d.toFixed(5)).toString() 
+            : ''
+    );
+
+  // Rysowanie osi
+  svg.append("g")
+      .attr("class", "x-axis")
+      .attr("transform", `translate(0, ${height / 2})`)
+      .call(axis);
+
+  // Dodawanie symboli nad każdym przedziałem na osi
+  symbols.forEach((symbol, index) => {
+      const midPoint = (probabilities[index] + probabilities[index + 1]) / 2;
+      svg.append("text")
+          .attr("x", scale(midPoint))
+          .attr("y", (height / 2) - 20)
+          .attr("text-anchor", "middle")
+          .attr("fill", "black")
+          .text(symbol);
+  });
+
+  // Zaznaczanie przedziału aktualnie rozpatrywanego symbolu
+  if (highlightRange) {
+      const [start, end] = highlightRange;
+      svg.append("line")
+          .attr("x1", scale(start))
+          .attr("x2", scale(end))
+          .attr("y1", height / 2)
+          .attr("y2", height / 2)
+          .attr("stroke", "red")
+          .attr("stroke-width", 4);
+  }
+}
+
 
 function clearErrors() {
   const errorMessages = document.querySelectorAll(".error-message");
