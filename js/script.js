@@ -123,6 +123,7 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
 
   // Rozkład prawdopodobieństwa
   const distributionBlock = createStepBlock("Rozkład prawdopodobieństwa", "", true);
+  const github_temp_var;
   distributionBlock.classList.add("result-box", "center-text");
   stepsContainer.appendChild(distributionBlock);
 
