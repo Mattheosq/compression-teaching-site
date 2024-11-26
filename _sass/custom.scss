@@ -1,3 +1,11 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%; 
+  display: flex;
+  flex-direction: column;
+}
+
 .input-group {
   position: relative; 
   display: flex;
@@ -17,7 +25,8 @@
 }
 
 .result-box.center-text {
-  text-align: center; 
+  display: flex;
+  justify-content: center;
 }
 
 .result-box.left-text {
@@ -28,8 +37,9 @@ textarea {
   resize: none; 
   overflow-y: auto; 
   width: 30%; 
-  height: 80px; 
-  padding: 2px; 
+  height: 80px;
+  margin: 0;
+  margin-bottom: 20px;
   border: 1px solid #ccc; 
   border-radius: 5px; 
   background-color: #f8f8f8; 
@@ -65,26 +75,28 @@ textarea::placeholder {
   white-space: normal;
 }
 
-.step-block h3, .result-box h3 {
+.step-block h3 {
   margin: 0;
-  padding: 0;
-  position: relative;
-  top: -40px; 
+  padding: 0 5px;
+  position: absolute;
+  top: -30px; 
   color: $conifer; 
   display: inline-block;
-  padding: 0 5px;
+  font-size: 100px;
 }
 
 .step-block {
-  margin-top: 35px;
+  position: relative;
+  margin-top: 60px;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%; 
-  display: flex;
-  flex-direction: column;
+.graphic-placeholder {
+  width: 90%; 
+  height: 150px; 
+  background-color: #ccc; 
+  margin: 10px auto; 
+  border: 1px solid #999; 
+  display: block; 
 }
 
 main.container {
@@ -97,3 +109,4 @@ footer {
   color: $conifer; 
   padding: 10px 0;
 }
+
