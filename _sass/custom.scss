@@ -17,9 +17,6 @@
 }
 
 .result-box.center-text {
-  // temp kom
-  
-  
   display: flex;
   justify-content: center;
 }
@@ -71,12 +68,11 @@ textarea::placeholder {
 
 .step-block h3 {
   margin: 0;
-  padding: 0;
+  padding: 0 5px;
   position: absolute;
   top: -40px; 
   color: $conifer; 
   display: inline-block;
-  padding: 0 5px;
 }
 
 .step-block {
@@ -105,7 +101,7 @@ footer {
 
 .graphic-placeholder {
   width: 90%; 
-  height: 50px; 
+  height: 100px; 
   background-color: #ccc; 
   margin: 10px auto; 
   border: 1px solid #999; 
