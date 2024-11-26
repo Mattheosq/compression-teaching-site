@@ -123,7 +123,6 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
 
   // Rozkład prawdopodobieństwa
   const distributionBlock = createStepBlock("Rozkład prawdopodobieństwa", "", true);
-  const github_temp_var = 0;
   distributionBlock.classList.add("result-box", "center-text");
   stepsContainer.appendChild(distributionBlock);
 
@@ -159,6 +158,7 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
 
       // Dodanie kroku do kontenera
       const stepBlock = createStepBlock(tytul, opis, false);
+      const temp_to_delete = 0;
       stepBlock.classList.add("result-box", "left-text");
       stepsContainer.appendChild(stepBlock);
 
