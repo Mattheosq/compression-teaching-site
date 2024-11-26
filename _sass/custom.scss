@@ -1,4 +1,9 @@
 .input-group {
+  // BACKKK
+  
+  
+  
+  
   position: relative; 
   display: flex;
   align-items: center;
@@ -7,7 +12,8 @@
 .result-box {
   display: inline-block;
   width: 80%; 
-  padding: 11px;
+  padding: 10px;
+  margin: 10px auto;
   background-color: #070808; 
   border: 2px solid #ccc; 
   border-radius: 5px; 
@@ -29,7 +35,7 @@ textarea {
   overflow-y: auto; 
   width: 30%; 
   height: 80px;
-  margin: 5px 0;
+  margin: 100px 0;
   padding: 2px; 
   border: 1px solid #ccc; 
   border-radius: 5px; 
