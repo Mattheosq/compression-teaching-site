@@ -115,6 +115,12 @@ h1, h2, h3, h4, h5, h6 {
                0 0 10px rgba(181, 232, 83, 0.1);
 }
 
+h2 {
+  margin-bottom: 5px; 
+  font-size: 25px;  
+  color: $conifer; 
+}
+
 #main_content h1 {
   font-size: 30px;
 }
