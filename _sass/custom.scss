@@ -68,7 +68,7 @@ textarea::placeholder {
 .step-block h3, .result-box h3 {
   margin: 0;
   padding: 0;
-  position: relative;
+  position: absolute;
   top: -40px; 
   color: $conifer; 
   display: inline-block;
@@ -76,6 +76,7 @@ textarea::placeholder {
 }
 
 .step-block {
+  position: relative;
   margin-top: 35px;
 }
 
