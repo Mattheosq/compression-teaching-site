@@ -304,7 +304,13 @@ function scrollToResult() {
 }
 
 function scrollToSteps() {
-  document.getElementById("steps-section").scrollIntoView({ behavior: "smooth" });
+  const stepsSection = document.getElementById("steps-section");
+  const offset = -25; // Korekta dla lepszego odstępu między tytułem "Rozkład prawdopodobieństwa", a górną częścią strony
+  const elementPosition = stepsSection.getBoundingClientRect().top + offset; // Pozycja górnej części sekcji stepsSection + korekta
+  window.scrollTo({ // Przewinięcie to wyznaczonej pozycji
+    top: elementPosition,
+    behavior: "smooth"
+  });
 }
 
 function kodowanieArytmetyczne(wiadomosc, prawdopodobienstwa, maxBits) {

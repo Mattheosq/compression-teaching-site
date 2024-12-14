@@ -7,19 +7,19 @@ layout: default
 
 <div class="app-container">
   <h2>Zbiór symboli S</h2>
-  <div class="input-group">
+  <div class="input-section">
     <textarea id="symbols" placeholder="a,b,c,d"></textarea>
     <div id="error-symbols" class="error-message" style="display: none;"></div>
   </div>
 
   <h2>Zbiór prawdopodobieństw</h2>
-  <div class="input-group">
+  <div class="input-section">
     <textarea id="probabilities" placeholder="0.1,0.2,0.3,0.4"></textarea>
     <div id="error-probabilities" class="error-message" style="display: none;"></div>
   </div>
 
   <h2>Ciąg do zakodowania</h2>
-  <div class="input-group">
+  <div class="input-section">
     <textarea id="sequence" placeholder="abc"></textarea>
     <div id="error-sequence" class="error-message" style="display: none;"></div>
   </div>
