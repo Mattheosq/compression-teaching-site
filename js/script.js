@@ -36,20 +36,33 @@ document.getElementById("submit-button").addEventListener("click", function() {
     displayError(symbolsInput, "Ilość symboli i prawdopodobieństw musi być taka sama.");
     return;
   }
+
+  // Mapowanie symboli
+  const paired = symbols.map((symbol, index) => ({
+    symbol: symbol,
+    probability: probabilitiesArray[index]
+  }));
+
+  // Sortowanie symboli względem malejących prawdopodobieństw
+  paired.sort((a, b) => b.probability - a.probability);
+
+  const sortedSymbols = paired.map(item => item.symbol);
+  const sortedProbabilitiesArray = paired.map(item => item.probability);
   
   const probabilities = {};
   let sum = 0;
-  for (let i = 0; i < symbols.length; i++) {
-    const probability = probabilitiesArray[i];
+  for (let i = 0; i < sortedSymbols.length; i++) {
+    const symbol = sortedSymbols[i];
+    const probability = sortedProbabilitiesArray[i];
     if (isNaN(probability) || probability <= 0) {
       hideResults();
       displayError(probabilitiesInput, "Prawdopodobieństwa muszą być liczbami dodatnimi z zakresu (0 - 1).");
       return;
     }
-    probabilities[symbols[i]] = { dolny: sum, gorny: sum + probability };
+    probabilities[symbol] = { dolny: sum, gorny: sum + probability };
     sum += probability;
   }
-  
+
   if (Math.abs(sum - 1) > 1e-6) {
     hideResults();
     displayError(probabilitiesInput, "Prawdopodobieństwa muszą sumować się do 1.");
@@ -70,7 +83,7 @@ document.getElementById("submit-button").addEventListener("click", function() {
     }
   }
   // Ustawienie globalnych zmiennych
-  window.currentSymbols = symbols;
+  window.currentSymbols = sortedSymbols;
   window.currentProbabilities = probabilities;
   window.currentSequence = sequenceValue;
 
@@ -82,17 +95,14 @@ document.getElementById("submit-button").addEventListener("click", function() {
 
 // Aktualizacja wyników na podstawie obecnych wartości
 function updateResults() {
-  const maxBits = parseInt(document.getElementById("binary-precision").value, 10) || 8;
-
-  const binary = kodowanieArytmetyczne(window.currentSequence, window.currentProbabilities, maxBits);
-
-  let binaryArray = binary.slice(2).split("").map(Number);
-  let decimalFromBinary = 0;
+  const {binaryResult, binaryArray} = kodowanieArytmetyczne(window.currentSequence, window.currentProbabilities);
+  
+  let decimalResult = new Decimal(0);
   for (let i = 0; i < binaryArray.length; i++) {
-      decimalFromBinary += binaryArray[i] * Math.pow(2, -(i + 1));
+    decimalResult = decimalResult.plus(new Decimal(binaryArray[i]).times(Decimal.pow(2, -(i + 1))));
   }
 
-  displayResult(binary, formatNumber(decimalFromBinary));
+  displayResult(binaryResult, decimalResult);
 }
 
 function displayResult(binaryResult, decimalResult) {
@@ -112,9 +122,6 @@ function hideResults() {
   const resultSection = document.getElementById("result-section");
   resultSection.style.display = "none";
 }
-
-// Event listener dla zmiany precyzji
-document.getElementById("binary-precision").addEventListener("input", updateResults);
 
 // Event listener dla przycisku Krok po kroku
 document.getElementById("step-by-step-button").addEventListener("click", function () {
@@ -142,32 +149,32 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
   stepsContainer.appendChild(distributionBlock);
 
   // Iteracja po symbolach w wiadomości
-  let dolny_limit = 0.0;
-  let gorny_limit = 1.0;
+  let dolny_limit = Decimal(0);
+  let gorny_limit = Decimal(1);
 
   for (let i = 0; i < window.currentSequence.length; i++) {
     const symbol = window.currentSequence[i];
-    const zakres = gorny_limit - dolny_limit;
+    const zakres = gorny_limit.minus(dolny_limit);
 
     // Obliczenia nowych przedziałów
-    const nowy_gorny = dolny_limit + zakres * window.currentProbabilities[symbol].gorny;
-    const nowy_dolny = dolny_limit + zakres * window.currentProbabilities[symbol].dolny;
+    const nowy_gorny = dolny_limit.plus(zakres.times(formatNumber(window.currentProbabilities[symbol].gorny)));
+    const nowy_dolny = dolny_limit.plus(zakres.times(formatNumber(window.currentProbabilities[symbol].dolny)));
 
     const tytul = `Krok ${i + 1}, symbol ${symbol}:`;
     
 
     const opis = `
       <div style="text-align: left;">
-          Delta: <span style="color: #f00;">${formatNumber(gorny_limit)}</span> − <span style="color: #0f0;">${formatNumber(dolny_limit)}</span> = <span style="color: #ffa500;">${formatNumber(zakres)}</span>
+          Delta: <span style="color: #f00;">${gorny_limit}</span> − <span style="color: #0f0;">${dolny_limit}</span> = <span style="color: #ffa500;">${zakres}</span>
       </div>
       <div style="text-align: left;">
-          Nowy lewy kraniec: <span style="color: #0f0;">${formatNumber(dolny_limit)}</span> + <span style="color: #ffa500;">${formatNumber(zakres)}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].dolny)}</span> = ${formatNumber(nowy_dolny)}
+          Nowy lewy kraniec: <span style="color: #0f0;">${dolny_limit}</span> + <span style="color: #ffa500;">${zakres}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].dolny)}</span> = ${nowy_dolny}
       </div>
       <div style="text-align: left;">
-          Nowy prawy kraniec: <span style="color: #0f0;">${formatNumber(dolny_limit)}</span> + <span style="color: #ffa500;">${formatNumber(zakres)}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].gorny)}</span> = ${formatNumber(nowy_gorny)}
+          Nowy prawy kraniec: <span style="color: #0f0;">${dolny_limit}</span> + <span style="color: #ffa500;">${zakres}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].gorny)}</span> = ${nowy_gorny}
       </div>
       <div style="text-align: left;">
-          Wyliczony przedział: ⟨<span style="color: #0f0;">${formatNumber(nowy_dolny)}</span>, <span style="color: #f00;">${formatNumber(nowy_gorny)}</span>)
+          Wyliczony przedział: ⟨<span style="color: #0f0;">${nowy_dolny}</span>, <span style="color: #f00;">${nowy_gorny}</span>)
       </div>
     `;
 
@@ -175,16 +182,16 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
     const stepBlock = createStepBlock(tytul, opis, false);
     stepBlock.classList.add("result-box","left-text");
 
-    const updatedProbabilities = probabilities.map(p => dolny_limit + zakres * p); // temp
+    const updatedProbabilities = probabilities.map(p => dolny_limit.plus(zakres.times(p)).toNumber()); // temp
 
     // Wywołanie createDynamicAxis dla osi w kroku (stepBlock)
     createDynamicAxis(
         stepBlock.querySelector(".graphic-placeholder"), 
         updatedProbabilities, // probabilities
         symbols, 
-        dolny_limit, 
-        gorny_limit, 
-        [nowy_dolny, nowy_gorny] // Zaznaczony przedział
+        dolny_limit.toNumber(), 
+        gorny_limit.toNumber(), 
+        [nowy_dolny.toNumber(), nowy_gorny.toNumber()] // Zaznaczony przedział
     );
 
     stepsContainer.appendChild(stepBlock);
@@ -197,8 +204,7 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
 });
 
 function formatNumber(value) {
-  const decimalValue = new Decimal(value);
-  return decimalValue.toFixed(12).replace(/\.?0+$/, '');
+  return value.toFixed(12).replace(/\.?0+$/, '');
 }
 
 function createStepBlock(title, content, isDistribution) {
@@ -313,54 +319,67 @@ function scrollToSteps() {
   });
 }
 
-function kodowanieArytmetyczne(wiadomosc, prawdopodobienstwa, maxBits) {
-  let dolny_limit = 0.0;
-  let gorny_limit = 1.0;
+function kodowanieArytmetyczne(wiadomosc, prawdopodobienstwa) {
+  let dolny_limit = new Decimal(0);
+  let gorny_limit = new Decimal(1);
   
   for (let i = 0; i < wiadomosc.length; i++) {
-    let symbol = wiadomosc[i];
-    let zakres = gorny_limit - dolny_limit;
-  
-    gorny_limit = dolny_limit + zakres * prawdopodobienstwa[symbol].gorny;
-    dolny_limit = dolny_limit + zakres * prawdopodobienstwa[symbol].dolny;
-  }
+    const symbol = wiadomosc[i];
+    const zakres = gorny_limit.minus(dolny_limit);
     
-  // Wynik w postaci binarnej
+    gorny_limit = dolny_limit.plus(zakres.times(formatNumber(prawdopodobienstwa[symbol].gorny)));
+    dolny_limit = dolny_limit.plus(zakres.times(formatNumber(prawdopodobienstwa[symbol].dolny)));
+  }
+  // Wyznaczanie podprzedziału mieszczącego się w koncowym przedziale <dolny_limit , gorny_limit), ktory zawiera wynik w postaci binarnej
   let binaryResult = "0.";
-  let tempDecimal = (dolny_limit + gorny_limit) / 2; 
-    
-  let binaryArray = []; 
-    
-  while (tempDecimal > 0 && binaryArray.length < maxBits) { 
-    tempDecimal *= 2;
-    if (tempDecimal >= 1) {
-        binaryArray.push(1);
-        tempDecimal -= 1;
-    } else {
+  let binaryArray = [];
+  let delay = 0;
+  let a = dolny_limit;
+  let b = gorny_limit;
+
+  while(true) { 
+    if(a.greaterThanOrEqualTo(0.5)){ 
+      binaryArray.push(1);
+      for (let i = 0; i < delay; i++) {
         binaryArray.push(0);
+      }
+      delay = 0;
+      a = a.minus(0.5);
+      b = b.minus(0.5);
     }
+    else if(b.lessThan(0.5)){ 
+      binaryArray.push(0);
+      for (let i = 0; i < delay; i++) {
+        binaryArray.push(1);
+      }
+      delay = 0;
+    }
+    else if(a.lessThan(0.25)){ 
+      binaryArray.push(0);
+      binaryArray.push(1);
+      for (let i = 0; i < delay; i++) {
+        binaryArray.push(1);
+      }
+      break;
+    }
+    else if(b.greaterThanOrEqualTo(0.75)){ 
+      binaryArray.push(1);
+      binaryArray.push(0);
+      for (let i = 0; i < delay; i++) {
+        binaryArray.push(0);
+      }
+      break;
+    }
+    else{ 
+      delay += 1;
+      a = a.minus(0.25);
+      b = b.minus(0.25);
+    }
+    a = a.times(2);
+    b = b.times(2);
   }
-
-  // Zaokrąglanie ostatniego bitu do jedynki
-  if (binaryArray.length === maxBits) {
-    let testArray = [...binaryArray];
-    testArray[testArray.length - 1] = 1; 
-      
-    let testDecimal = 0;
-    for (let i = 0; i < testArray.length; i++) {
-          testDecimal += testArray[i] * Math.pow(2, -(i + 1));
-    }
-      
-    // Sprawdzenie czy tak zmodyfikowany wynik dalej zmieści się w przedziale
-    if (testDecimal >= dolny_limit && testDecimal < gorny_limit) { 
-        binaryArray = testArray; 
-    }
-  }
-
   binaryResult += binaryArray.join("");
-
-
-  return binaryResult;
+  return {binaryResult, binaryArray};
 }
   
   

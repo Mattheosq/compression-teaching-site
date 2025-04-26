@@ -34,11 +34,6 @@ layout: default
   <div style="margin: 20px 0;">
     <h3>Zapis binarny</h3>
     <div id="binary-result" class="result-box"></div>
-    <div style="margin-top: 10px; display: inline-block;">
-          Precyzja: 
-          <input id="binary-precision" type="number" min="1" max="32" value="8" style="width: 50px; text-align: center;" />
-          bitów
-    </div>
   </div>
     
   <div style="margin: 20px 0;">
