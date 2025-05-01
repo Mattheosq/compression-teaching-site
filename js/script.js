@@ -168,10 +168,10 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
           Delta: <span style="color: #f00;">${gorny_limit}</span> − <span style="color: #0f0;">${dolny_limit}</span> = <span style="color: #ffa500;">${zakres}</span>
       </div>
       <div style="text-align: left;">
-          Nowy lewy kraniec: <span style="color: #0f0;">${dolny_limit}</span> + <span style="color: #ffa500;">${zakres}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].dolny)}</span> = ${nowy_dolny}
+          Nowy lewy koniec przedziału: <span style="color: #0f0;">${dolny_limit}</span> + <span style="color: #ffa500;">${zakres}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].dolny)}</span> = ${nowy_dolny}
       </div>
       <div style="text-align: left;">
-          Nowy prawy kraniec: <span style="color: #0f0;">${dolny_limit}</span> + <span style="color: #ffa500;">${zakres}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].gorny)}</span> = ${nowy_gorny}
+          Nowy prawy koniec przedziału: <span style="color: #0f0;">${dolny_limit}</span> + <span style="color: #ffa500;">${zakres}</span> · <span style="color: #00f;">${formatNumber(window.currentProbabilities[symbol].gorny)}</span> = ${nowy_gorny}
       </div>
       <div style="text-align: left;">
           Wyliczony przedział: ⟨<span style="color: #0f0;">${nowy_dolny}</span>, <span style="color: #f00;">${nowy_gorny}</span>)
