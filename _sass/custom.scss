@@ -55,7 +55,8 @@ textarea::placeholder {
 /* Specyficzny styl dla #submit-button */
 #submit-button {
   margin-top: 20px; 
-  display: block; 
+  //display: inline-block; zmiana
+  //width: 100%; 
 }
 
 /* Specyficzny styl dla #sequence */
@@ -92,7 +93,7 @@ textarea::placeholder {
 
 .graphic-placeholder {
   width: 90%; 
-  height: 150px;
+  //height: 150px;
   background-color: #fff; 
   margin: 10px auto; 
   border: 1px solid #999; 
