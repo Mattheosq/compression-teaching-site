@@ -1,4 +1,3 @@
-// Even listener dla przycisku Zatwierdz
 document.getElementById("submit-button").addEventListener("click", function() {
   const symbolsInput = document.getElementById("symbols");
   const probabilitiesInput = document.getElementById("probabilities");
@@ -10,7 +9,6 @@ document.getElementById("submit-button").addEventListener("click", function() {
   
   clearErrors();
 
-  // Czyszczenie sekcji krok po kroku przy każdym zatwierdzeniu
   const stepsContainer = document.getElementById("steps-section");
   stepsContainer.innerHTML = "";
 
@@ -31,29 +29,24 @@ document.getElementById("submit-button").addEventListener("click", function() {
     displayError(sequenceInput, "Pole ciągu do zakodowania nie może być puste.");
     return;
   }
-  // Przetworzenie wejściowych danych użytkownika
   const symbols = symbolsValue.split(',').map(s => s.trim());
   const probabilitiesArray = probabilitiesValue.split(',').map(p => parseFloat(p.trim()));
   
-
   if (symbols.length !== probabilitiesArray.length) {
     hideResults();
     displayError(symbolsInput, "Ilość symboli i prawdopodobieństw musi być taka sama.");
     return;
   }
 
-  // Mapowanie symboli
   const paired = symbols.map((symbol, index) => ({
     symbol: symbol,
     probability: probabilitiesArray[index]
   }));
 
-  // Sortowanie symboli względem malejących prawdopodobieństw
   paired.sort((a, b) => b.probability - a.probability);
 
   const sortedSymbols = paired.map(item => item.symbol);
   const sortedProbabilitiesArray = paired.map(item => item.probability);
-  
   const probabilities = {};
   let sum = 0;
   for (let i = 0; i < sortedSymbols.length; i++) {
@@ -81,18 +74,13 @@ document.getElementById("submit-button").addEventListener("click", function() {
       return;
     }
   }
-  // Ustawienie globalnych zmiennych
+
   window.currentSymbols = sortedSymbols;
   window.currentProbabilities = probabilities;
   window.currentSequence = sequenceValue;
-
-  // Wywołanie funkcji aktualizacji wyników
   updateResults();
-  // scrollToResult();
-
 });
 
-// Aktualizacja wyników na podstawie obecnych wartości
 function updateResults() {
   const {binaryResult, binaryArray} = kodowanieArytmetyczne(window.currentSequence, window.currentProbabilities);
   
@@ -122,32 +110,27 @@ function hideResults() {
   resultSection.style.display = "none";
 }
 
-// Event listener dla przycisku Krok po kroku
 document.getElementById("step-by-step-button").addEventListener("click", function () {
   const stepsContainer = document.getElementById("steps-section");
   stepsContainer.innerHTML = ""; 
 
-  // Rozkład prawdopodobieństwa
   const distributionBlock = createStepBlock("Rozkład prawdopodobieństwa", "", true);
   distributionBlock.classList.add("result-box", "center-text");
 
-  // Pobranie danych dla osi
   const probabilities = Object.values(window.currentProbabilities).map(p => p.gorny);
   probabilities.unshift(0);
   const symbols = window.currentSymbols;
 
-  // Wywołanie createDynamicAxis dla Rozkładu prawdopodobieństwa
   createDynamicAxis(
-      distributionBlock.querySelector(".graphic-placeholder"), // Kontener osi
-      probabilities, // Wartości przedziałów
-      symbols, // Symbole
-      0, // Lewy kraniec
-      1 // Prawy kraniec
+      distributionBlock.querySelector(".graphic-placeholder"), 
+      probabilities, 
+      symbols, 
+      0,
+      1 
   );
 
   stepsContainer.appendChild(distributionBlock);
 
-  // Iteracja po symbolach w wiadomości
   let dolny_limit = Decimal(0);
   let gorny_limit = Decimal(1);
 
@@ -155,13 +138,10 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
     const symbol = window.currentSequence[i];
     const zakres = gorny_limit.minus(dolny_limit);
 
-    // Obliczenia nowych przedziałów
     const nowy_gorny = dolny_limit.plus(zakres.times(window.currentProbabilities[symbol].gorny));
     const nowy_dolny = dolny_limit.plus(zakres.times(window.currentProbabilities[symbol].dolny));
 
     const tytul = `Krok ${i + 1}, symbol ${symbol}:`;
-    
-
     const opis = `
       <div style="text-align: left;">
           Delta: <span style="color: #f00;">${gorny_limit}</span> − <span style="color: #0f0;">${dolny_limit}</span> = <span style="color: #ffa500;">${zakres}</span>
@@ -177,25 +157,21 @@ document.getElementById("step-by-step-button").addEventListener("click", functio
       </div>
     `;
 
-    // Dodanie kroku do kontenera
     const stepBlock = createStepBlock(tytul, opis, false);
     stepBlock.classList.add("result-box","left-text");
-
     const updatedProbabilities = probabilities.map(p => dolny_limit.plus(zakres.times(p)).toNumber()); // temp
 
-    // Wywołanie createDynamicAxis dla osi w kroku (stepBlock)
     createDynamicAxis(
         stepBlock.querySelector(".graphic-placeholder"), 
-        updatedProbabilities, // probabilities
+        updatedProbabilities, 
         symbols, 
         dolny_limit.toNumber(), 
         gorny_limit.toNumber(), 
-        [nowy_dolny.toNumber(), nowy_gorny.toNumber()] // Zaznaczony przedział
+        [nowy_dolny.toNumber(), nowy_gorny.toNumber()] 
     );
 
     stepsContainer.appendChild(stepBlock);
 
-    // Aktualizacja limitów
     dolny_limit = nowy_dolny;
     gorny_limit = nowy_gorny;
   }
@@ -229,19 +205,12 @@ function createStepBlock(title, content, isDistribution) {
   return stepBlock;
 }
 
-// Funkcja tworząca dynamiczne grafiki osi z przedziałami
 function createDynamicAxis(containerId, probabilities, symbols, dolny_limit, gorny_limit, highlightRange = null) {
   const container = d3.select(containerId);
-  //container.html(''); 
 
   const width = 720; 
   const height = 150;
   const padding = 40;
-
-  //Tworzenie kanwy SVG
-  // const svg = container.append("svg")
-  //     .attr("width", width)
-  //     .attr("height", height);
 
   const svg = container.append("svg")
       .attr("viewBox", `0 0 ${width} ${height}`)
@@ -249,12 +218,10 @@ function createDynamicAxis(containerId, probabilities, symbols, dolny_limit, gor
       .style("width", "100%")
       .style("height", "auto")
 
-  // Wyliczanie skali dla zachowania proporcji w długości przedziałów
   const scale = d3.scaleLinear()
       .domain([dolny_limit, gorny_limit])
       .range([padding, width - padding]);
 
-  // Tworzenie osi
   const axis = d3.axisBottom(scale)
       .tickValues(probabilities)
       .tickFormat(highlightRange == null 
@@ -264,13 +231,11 @@ function createDynamicAxis(containerId, probabilities, symbols, dolny_limit, gor
               : ''
       );
 
-  // Rysowanie osi
   svg.append("g")
       .attr("class", "x-axis")
       .attr("transform", `translate(0, ${height / 2})`)
       .call(axis);
 
-  // Dodawanie symboli nad każdym przedziałem na osi
   symbols.forEach((symbol, index) => {
       const midPoint = (probabilities[index] + probabilities[index + 1]) / 2;
       svg.append("text")
@@ -281,7 +246,6 @@ function createDynamicAxis(containerId, probabilities, symbols, dolny_limit, gor
           .text(symbol);
   });
 
-  // Zaznaczanie przedziału aktualnie rozpatrywanego symbolu
   if (highlightRange) {
       const [start, end] = highlightRange;
       svg.append("line")
@@ -294,7 +258,6 @@ function createDynamicAxis(containerId, probabilities, symbols, dolny_limit, gor
   }
 }
 
-//
 function clearErrors() {
   const errorMessages = document.querySelectorAll(".error-message");
   errorMessages.forEach(error => error.remove());
@@ -310,15 +273,11 @@ function displayError(inputElement, message) {
   parent.appendChild(errorMessage);
 }
   
-// function scrollToResult() {
-//   document.getElementById("result-section").scrollIntoView({ behavior: "smooth" });
-// }
-
 function scrollToSteps() {
   const stepsSection = document.getElementById("steps-section");
-  const offset = -40; // Korekta dla lepszego odstępu między tytułem "Rozkład prawdopodobieństwa", a górną częścią strony
-  const elementPosition = stepsSection.getBoundingClientRect().top + offset; // Pozycja górnej części sekcji stepsSection + korekta
-  window.scrollTo({ // Przewinięcie to wyznaczonej pozycji
+  const offset = -40; 
+  const elementPosition = stepsSection.getBoundingClientRect().top + offset; 
+  window.scrollTo({ 
     top: elementPosition,
     behavior: "smooth"
   });
@@ -335,7 +294,7 @@ function kodowanieArytmetyczne(wiadomosc, prawdopodobienstwa) {
     gorny_limit = dolny_limit.plus(zakres.times(prawdopodobienstwa[symbol].gorny));
     dolny_limit = dolny_limit.plus(zakres.times(prawdopodobienstwa[symbol].dolny));
   }
-  // Wyznaczanie podprzedziału mieszczącego się w koncowym przedziale <dolny_limit , gorny_limit), ktory zawiera wynik w postaci binarnej
+  
   let binaryResult = "0.";
   let binaryArray = [];
   let delay = 0;

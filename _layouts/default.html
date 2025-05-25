@@ -6,27 +6,22 @@
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
     {% include head-custom.html %}
   </head>
-
   <body>
     <header>
       <div class="container">
         <a id="a-title" href="{{ '/' | relative_url }}">
           <h1>{{ site.title | default: site.github.repository_name }}</h1>
         </a>
-        <!-- <h2>{{ site.description | default: site.github.project_tagline }}</h2> -->
       </div>
     </header>
-
     <main class="container">
       <section id="main_content">
         {{ content }}
       </section>
     </main>
-
     <footer>
       <p>© {{ site.title }}, Wojskowa Akademia Techniczna</p>
     </footer>
-
     <script src="{{ '/js/script.js' | relative_url }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.4.3/decimal.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>

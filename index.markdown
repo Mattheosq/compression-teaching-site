@@ -2,7 +2,7 @@
 layout: default
 ---
 <div class="app-container">
-  <h2>Zbiór symboli S</h2>
+  <h2>Zbiór symboli</h2>
   <div class="input-section">
     <textarea id="symbols" placeholder="a,b,c,d"></textarea>
     <div id="error-symbols" class="error-message" style="display: none;"></div>

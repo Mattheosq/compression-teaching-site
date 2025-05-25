@@ -46,25 +46,19 @@ textarea {
   box-sizing: border-box; 
 }
 
-/* Styl podpowiedzi przed wpisaniem danych */
 textarea::placeholder {
   color: rgba(128, 128, 128, 0.6); 
   font-style: italic;
 }
 
-/* Specyficzny styl dla #submit-button */
 #submit-button {
   margin-top: 20px; 
-  //display: inline-block; zmiana
-  //width: 100%; 
 }
 
-/* Specyficzny styl dla #sequence */
 #sequence {
   height: 30px; 
 }
 
-/* Styl dla błędów */
 .error-message {
   margin-left: 30px; 
   padding: 10px;
@@ -73,7 +67,6 @@ textarea::placeholder {
   background-color: rgba(255, 0, 0, 0.2); 
   color: red; 
   font-size: 14px;
-  white-space: normal;
 }
 
 .step-block h3 {
@@ -93,7 +86,6 @@ textarea::placeholder {
 
 .graphic-placeholder {
   width: 90%; 
-  //height: 150px;
   background-color: #fff; 
   margin: 10px auto; 
   border: 1px solid #999; 
