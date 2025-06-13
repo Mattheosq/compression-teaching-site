@@ -275,7 +275,7 @@ function displayError(inputElement, message) {
   
 function scrollToSteps() {
   const stepsSection = document.getElementById("steps-section");
-  const offset = -40; 
+  const offset = 0; 
   const elementPosition = stepsSection.getBoundingClientRect().top + offset; 
   window.scrollTo({ 
     top: elementPosition,
